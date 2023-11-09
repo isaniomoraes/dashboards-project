@@ -7,6 +7,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -65,6 +72,7 @@ const DashboardItemTitle = ({ item }: { item: TDashboardDetailsItem }) => {
 export default function Dashboard() {
   const { status, data } = useQuery("todos", getDashboards);
   const [dashboards, setDashboards] = useState<TDashboard[]>([]);
+  const [filter, setFilter] = useState<string>("all");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -86,15 +94,15 @@ export default function Dashboard() {
       removeFavorite(id);
       toast({
         title: "Removed from favorites",
-        description: "You can add it back by clicking the star icon",
+        description: "Add it back by clicking the star icon",
         action: <ToastAction altText="Try again">Ok</ToastAction>,
-        variant: "destructive",
+        variant: "default", // default | destructive
       });
     } else {
       addFavorite(id);
       toast({
         title: "Added to favorites",
-        description: "You can remove it by clicking the star icon",
+        description: "Remove it by clicking the star icon",
         action: <ToastAction altText="Try again">Ok</ToastAction>,
         variant: "default",
       });
@@ -117,6 +125,21 @@ export default function Dashboard() {
         <div className="max-w-xl mx-auto">
           <header className="w-full py-2 mb-4 border-b border-slate-300 flex items-center justify-between">
             <h1 className="font-medium text-base">HDSI2 Dashboard</h1>
+            <Select onValueChange={(value) => setFilter(value)} value={filter}>
+              <SelectTrigger className="w-52 text-sm">
+                <span className="text-slate-400">Filter items</span>
+                <SelectValue
+                  placeholder="Filter items"
+                  className="text-left flex-grow"
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All types</SelectItem>
+                <SelectItem value="visualization">Visualization</SelectItem>
+                <SelectItem value="map">Map</SelectItem>
+                <SelectItem value="text">Text</SelectItem>
+              </SelectContent>
+            </Select>
           </header>
           <section className="w-full">
             {status === "loading" ? (
@@ -148,10 +171,15 @@ export default function Dashboard() {
                           </span>
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent className="px-4 pb-4 pt-0">
+                      <AccordionContent className="px-4">
                         <ul className="space-y-2 divide-y divide-slate-200">
-                          {dashboard?.details?.dashboardItems?.map(
-                            (item: TDashboardDetailsItem) => {
+                          {dashboard?.details?.dashboardItems
+                            ?.filter(
+                              (i) =>
+                                filter === "all" ||
+                                i.type?.toLocaleLowerCase() === filter
+                            )
+                            ?.map((item: TDashboardDetailsItem) => {
                               if (item.type === "MESSAGES") return;
                               return (
                                 <li
@@ -161,8 +189,7 @@ export default function Dashboard() {
                                   <DashboardItemTitle item={item} />
                                 </li>
                               );
-                            }
-                          )}
+                            })}
                         </ul>
                       </AccordionContent>
                     </AccordionItem>
