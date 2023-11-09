@@ -125,7 +125,10 @@ export default function Dashboard() {
         <div className="max-w-xl mx-auto">
           <header className="w-full py-2 mb-4 border-b border-slate-300 flex items-center justify-between">
             <h1 className="font-medium text-base">HDSI2 Dashboard</h1>
-            <Select onValueChange={(value) => setFilter(value)} value={filter}>
+            <Select
+              onValueChange={(value) => setFilter(value)}
+              value={filter}
+              name="filter-dashboards-dropdown">
               <SelectTrigger className="w-52 text-sm">
                 <span className="text-slate-400">Filter items</span>
                 <SelectValue
@@ -134,10 +137,18 @@ export default function Dashboard() {
                 />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All types</SelectItem>
-                <SelectItem value="visualization">Visualization</SelectItem>
-                <SelectItem value="map">Map</SelectItem>
-                <SelectItem value="text">Text</SelectItem>
+                <SelectItem id="all-dashboards" value="all">
+                  All types
+                </SelectItem>
+                <SelectItem id="visualization-dashboards" value="visualization">
+                  Visualization
+                </SelectItem>
+                <SelectItem id="map-dashboards" value="map">
+                  Map
+                </SelectItem>
+                <SelectItem id="text-dashboards" value="text">
+                  Text
+                </SelectItem>
               </SelectContent>
             </Select>
           </header>
@@ -149,6 +160,7 @@ export default function Dashboard() {
                 type="single"
                 collapsible={true}
                 defaultValue={data?.dashboards?.[0]?.id}
+                id="dashboards-list"
                 className="w-full space-y-2">
                 {dashboards?.map((dashboard: TDashboard) => {
                   return (

@@ -24,6 +24,11 @@ I leverage react-query to handle API calls and states directly at the component 
 yarn install && yarn dev
 ```
 
+## Running Cypress End-to-End Tests
+```bash
+yarn cypress
+```
+
 ## Expanding the ESLint Configuration
 
 For production applications, consider updating the ESLint configuration to enable type-aware lint rules:
