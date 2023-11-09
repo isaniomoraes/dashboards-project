@@ -2,10 +2,11 @@ import { DASHBOARDS_API } from "../../constants/api";
 import { useQuery } from "react-query";
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 import { formatText } from "@/lib/utils";
 
@@ -18,13 +19,13 @@ import {
 
 // @ts-ignore
 import {
-  IconChevronDown24,
   IconStar16,
   IconStarFilled16,
   IconTextBox16,
   IconVisualizationColumn16,
   IconWorld16,
 } from "@dhis2/ui-icons";
+import Loading from "./Loading";
 
 async function getDashboardDetails(
   dashboardId: string
@@ -71,14 +72,45 @@ async function getDashboards(): Promise<TDashboards> {
   return dashboardsWithDetails;
 }
 
+const DashboardItemIcon = ({ item }: { item: TDashboardDetailsItem }) => {
+  return (
+    <span className="text-slate-500">
+      {item?.type === "TEXT" && <IconTextBox16 />}
+      {item?.type === "MAP" && <IconWorld16 />}
+      {item?.type === "VISUALIZATION" && <IconVisualizationColumn16 />}
+    </span>
+  );
+};
+
 const stripDashboardTitle = (title: string): string => {
   if (!title || !title.includes(": ")) return title;
   return title.split(": ")[1];
 };
 
+const DashboardItemTitle = ({ item }: { item: TDashboardDetailsItem }) => {
+  if (item?.type === "TEXT") {
+    // Only use this function for sanitized text
+    return (
+      <span
+        dangerouslySetInnerHTML={{
+          __html: formatText(item?.text),
+        }}
+      />
+    );
+  }
+
+  return (
+    <span>
+      {stripDashboardTitle(
+        item?.[item?.type?.toLocaleLowerCase() as keyof TDashboardDetailsItem]
+          ?.name
+      )}
+    </span>
+  );
+};
+
 export default function Dashboard() {
   const { status, data } = useQuery("todos", getDashboards);
-  console.log(data);
 
   return (
     <>
@@ -89,74 +121,55 @@ export default function Dashboard() {
           </header>
           <section className="w-full">
             {status === "loading" ? (
-              <div className="w-full space-y-2">
-                <div className="w-full h-8 rounded bg-slate-100 animate-pulse"></div>
-                <div className="w-full h-8 rounded bg-slate-100 animate-pulse"></div>
-                <div className="w-full h-8 rounded bg-slate-100 animate-pulse"></div>
-                <div className="w-full h-8 rounded bg-slate-100 animate-pulse"></div>
-              </div>
+              <Loading />
             ) : (
-              <div className="space-y-2 w-full">
+              <Accordion
+                type="single"
+                collapsible={true}
+                className="w-full space-y-2">
                 {data?.dashboards?.map((dashboard: TDashboard) => {
                   return (
-                    <Collapsible
+                    <AccordionItem
+                      value={`dashboard-${dashboard?.id}`}
                       key={`dashboard-${dashboard?.id}`}
-                      className="rounded-md shadow w-full bg-white">
-                      <CollapsibleTrigger className="text-base font-medium flex items-center justify-between gap-2 px-4 py-2 w-full">
+                      className="rounded-md shadow w-full bg-white relative">
+                      <AccordionTrigger className="text-base font-medium flex items-center justify-between gap-2 px-4 py-2 w-full">
                         {dashboard?.displayName}
-                        <div className="flex items-center justify-end gap-2 text-slate-600">
-                          {dashboard?.starred ? (
-                            <IconStarFilled16 />
-                          ) : (
-                            <IconStar16 />
-                          )}
-                          <IconChevronDown24 />
+                        <div className="flex items-center justify-end gap-2 text-slate-600 absolute right-10">
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              console.log("toggle favorite", dashboard?.id);
+                            }}>
+                            {dashboard?.starred ? (
+                              <IconStarFilled16 />
+                            ) : (
+                              <IconStar16 />
+                            )}
+                          </span>
                         </div>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="px-4 pb-4 pt-0">
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4 pt-0">
                         <ul className="space-y-2 divide-y divide-slate-200">
                           {dashboard?.details?.dashboardItems?.map(
                             (item: TDashboardDetailsItem) => {
+                              if (item.type === "MESSAGES") return;
                               return (
                                 <li
                                   key={`dashboard-item-${item.id}`}
                                   className="flex items-start justify-start gap-1 text-slate-700 text-sm pt-2">
-                                  <>
-                                    <span className="text-slate-500">
-                                      {item?.type === "TEXT" && (
-                                        <IconTextBox16 />
-                                      )}
-                                      {item?.type === "MAP" && <IconWorld16 />}
-                                      {item?.type === "VISUALIZATION" && (
-                                        <IconVisualizationColumn16 />
-                                      )}
-                                    </span>
-                                    <span>
-                                      {item?.type === "TEXT" ? (
-                                        <span
-                                          dangerouslySetInnerHTML={{
-                                            __html: formatText(item?.text),
-                                          }}
-                                        />
-                                      ) : (
-                                        stripDashboardTitle(
-                                          item?.[
-                                            item?.type?.toLocaleLowerCase() as keyof TDashboardDetailsItem
-                                          ]?.name
-                                        )
-                                      )}
-                                    </span>
-                                  </>
+                                  <DashboardItemIcon item={item} />
+                                  <DashboardItemTitle item={item} />
                                 </li>
                               );
                             }
                           )}
                         </ul>
-                      </CollapsibleContent>
-                    </Collapsible>
+                      </AccordionContent>
+                    </AccordionItem>
                   );
                 })}
-              </div>
+              </Accordion>
             )}
           </section>
         </div>
