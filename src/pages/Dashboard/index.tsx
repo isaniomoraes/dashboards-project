@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useQuery } from "react-query";
 
 import {
@@ -88,36 +88,44 @@ export default function Dashboard() {
     }
   }, [data]);
 
-  const onToggleFavorite = (id: string) => {
-    const favorites = getFavorites();
-    if (favorites?.includes(id)) {
-      removeFavorite(id);
-      toast({
-        title: "Removed from favorites",
-        description: "Add it back by clicking the star icon",
-        action: <ToastAction altText="Try again">Ok</ToastAction>,
-        variant: "default", // default | destructive
-      });
-    } else {
-      addFavorite(id);
-      toast({
-        title: "Added to favorites",
-        description: "Remove it by clicking the star icon",
-        action: <ToastAction altText="Try again">Ok</ToastAction>,
-        variant: "default",
-      });
-    }
-    const updatedDashboards = dashboards?.map((dashboard: TDashboard) => {
-      if (dashboard?.id === id) {
-        return {
-          ...dashboard,
-          starred: !dashboard?.starred,
-        };
+  const handleFilterChange = useCallback(
+    (value: string) => setFilter(value),
+    []
+  );
+
+  const onToggleFavorite = useCallback(
+    (id: string) => {
+      const favorites = getFavorites();
+      if (favorites?.includes(id)) {
+        removeFavorite(id);
+        toast({
+          title: "Removed from favorites",
+          description: "Add it back by clicking the star icon",
+          action: <ToastAction altText="Try again">Ok</ToastAction>,
+          variant: "default", // default | destructive
+        });
+      } else {
+        addFavorite(id);
+        toast({
+          title: "Added to favorites",
+          description: "Remove it by clicking the star icon",
+          action: <ToastAction altText="Try again">Ok</ToastAction>,
+          variant: "default",
+        });
       }
-      return dashboard;
-    });
-    setDashboards(updatedDashboards);
-  };
+      const updatedDashboards = dashboards?.map((dashboard: TDashboard) => {
+        if (dashboard?.id === id) {
+          return {
+            ...dashboard,
+            starred: !dashboard?.starred,
+          };
+        }
+        return dashboard;
+      });
+      setDashboards(updatedDashboards);
+    },
+    [dashboards, toast]
+  );
 
   return (
     <>
@@ -126,7 +134,7 @@ export default function Dashboard() {
           <header className="w-full py-2 mb-4 border-b border-slate-300 flex items-center justify-between">
             <h1 className="font-medium text-base">HDSI2 Dashboard</h1>
             <Select
-              onValueChange={(value) => setFilter(value)}
+              onValueChange={handleFilterChange}
               value={filter}
               name="filter-dashboards-dropdown">
               <SelectTrigger className="w-52 text-sm">
@@ -185,25 +193,27 @@ export default function Dashboard() {
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-4">
-                        <ul className="space-y-2 divide-y divide-slate-200">
-                          {dashboard?.details?.dashboardItems
-                            ?.filter(
-                              (i) =>
-                                filter === "all" ||
-                                i.type?.toLocaleLowerCase() === filter
-                            )
-                            ?.map((item: TDashboardDetailsItem) => {
-                              if (item.type === "MESSAGES") return;
-                              return (
-                                <li
-                                  key={`dashboard-item-${item.id}`}
-                                  className="flex items-start justify-start gap-1 text-slate-700 text-sm pt-2">
-                                  <DashboardItemIcon item={item} />
-                                  <DashboardItemTitle item={item} />
-                                </li>
-                              );
-                            })}
-                        </ul>
+                        {dashboard?.details?.dashboardItems?.length > 0 && (
+                          <ul className="space-y-2 divide-y divide-slate-200">
+                            {dashboard?.details?.dashboardItems
+                              ?.filter(
+                                (i) =>
+                                  filter === "all" ||
+                                  i.type?.toLocaleLowerCase() === filter
+                              )
+                              ?.map((item: TDashboardDetailsItem) => {
+                                if (item.type === "MESSAGES") return;
+                                return (
+                                  <li
+                                    key={`dashboard-item-${item.id}`}
+                                    className="flex items-start justify-start gap-1 text-slate-700 text-sm pt-2">
+                                    <DashboardItemIcon item={item} />
+                                    <DashboardItemTitle item={item} />
+                                  </li>
+                                );
+                              })}
+                          </ul>
+                        )}
                       </AccordionContent>
                     </AccordionItem>
                   );
