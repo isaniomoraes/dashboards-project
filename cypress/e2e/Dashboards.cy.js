@@ -1,6 +1,6 @@
 describe("Dashboard render all components and dashboard", () => {
   beforeEach(() => {
-    cy.visit("http://127.0.0.1:5173/");
+    cy.visit("http://localhost:5173");
   });
 
   it("Display loading state with skeleton UI", () => {
@@ -29,7 +29,7 @@ describe("Dashboard render all components and dashboard", () => {
 
 describe("Dashboard filter feature", () => {
   beforeEach(() => {
-    cy.visit("http://127.0.0.1:5173/");
+    cy.visit("http://localhost:5173");
   });
 
   it("Filter dropdown is clickable", () => {
