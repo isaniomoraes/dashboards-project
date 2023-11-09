@@ -1,4 +1,4 @@
-import { DASHBOARDS_API } from "../../constants/api";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
 import {
@@ -7,15 +7,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
 
+import { getDashboards } from "./api";
+import { getFavorites, addFavorite, removeFavorite } from "./favorites";
 import { formatText } from "@/lib/utils";
+import Loading from "./Loading";
 
-import {
-  TDashboards,
-  TDashboard,
-  TDashboardDetails,
-  TDashboardDetailsItem,
-} from "./types";
+import { TDashboard, TDashboardDetailsItem } from "./types";
 
 // @ts-ignore
 import {
@@ -25,52 +25,6 @@ import {
   IconVisualizationColumn16,
   IconWorld16,
 } from "@dhis2/ui-icons";
-import Loading from "./Loading";
-
-async function getDashboardDetails(
-  dashboardId: string
-): Promise<TDashboardDetails> {
-  const url = `https://gist.githubusercontent.com/kabaros/da79636249e10a7c991a4638205b1726/raw/fa044f54e7a5493b06bb51da40ecc3a9cb4cd3a5/${dashboardId}.json`;
-
-  try {
-    const res = await fetch(url);
-
-    if (!res.ok) {
-      throw new Error(
-        `Failed to fetch dashboard details for dashboard ID: ${dashboardId}`
-      );
-    }
-
-    return res.json();
-  } catch (error) {
-    console.error(`Error fetching dashboard details: ${error}`);
-    throw error;
-  }
-}
-
-async function getDashboards(): Promise<TDashboards> {
-  const res = await fetch(DASHBOARDS_API);
-  const { dashboards } = await res.json();
-
-  // Fetch details for each dashboard
-  const dashboardDetailsPromises: Promise<TDashboardDetails>[] = dashboards.map(
-    (dashboard: TDashboard) => getDashboardDetails(dashboard.id)
-  );
-
-  // Wait for all details to be fetched
-  const dashboardDetails: TDashboardDetails[] = await Promise.all(
-    dashboardDetailsPromises
-  );
-
-  // Combine dashboard details with the original dashboards
-  const dashboardsWithDetails: TDashboards = {
-    dashboards: dashboards.map((dashboard: TDashboard, index: number) => ({
-      ...dashboard,
-      details: dashboardDetails[index],
-    })),
-  };
-  return dashboardsWithDetails;
-}
 
 const DashboardItemIcon = ({ item }: { item: TDashboardDetailsItem }) => {
   return (
@@ -111,6 +65,52 @@ const DashboardItemTitle = ({ item }: { item: TDashboardDetailsItem }) => {
 
 export default function Dashboard() {
   const { status, data } = useQuery("todos", getDashboards);
+  const [dashboards, setDashboards] = useState<TDashboard[]>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (data) {
+      const favorites = getFavorites();
+      const dashboards = data?.dashboards?.map((dashboard: TDashboard) => {
+        return {
+          ...dashboard,
+          starred: favorites?.includes(dashboard?.id),
+        };
+      });
+      setDashboards(dashboards);
+    }
+  }, [data]);
+
+  const onToggleFavorite = (id: string) => {
+    const favorites = getFavorites();
+    if (favorites?.includes(id)) {
+      removeFavorite(id);
+      toast({
+        title: "Removed from favorites",
+        description: "You can add it back by clicking the star icon",
+        action: <ToastAction altText="Try again">Ok</ToastAction>,
+        variant: "destructive",
+      });
+    } else {
+      addFavorite(id);
+      toast({
+        title: "Added to favorites",
+        description: "You can remove it by clicking the star icon",
+        action: <ToastAction altText="Try again">Ok</ToastAction>,
+        variant: "default",
+      });
+    }
+    const updatedDashboards = dashboards?.map((dashboard: TDashboard) => {
+      if (dashboard?.id === id) {
+        return {
+          ...dashboard,
+          starred: !dashboard?.starred,
+        };
+      }
+      return dashboard;
+    });
+    setDashboards(updatedDashboards);
+  };
 
   return (
     <>
@@ -127,7 +127,7 @@ export default function Dashboard() {
                 type="single"
                 collapsible={true}
                 className="w-full space-y-2">
-                {data?.dashboards?.map((dashboard: TDashboard) => {
+                {dashboards?.map((dashboard: TDashboard) => {
                   return (
                     <AccordionItem
                       value={`dashboard-${dashboard?.id}`}
@@ -139,7 +139,7 @@ export default function Dashboard() {
                           <span
                             onClick={(e) => {
                               e.stopPropagation();
-                              console.log("toggle favorite", dashboard?.id);
+                              onToggleFavorite(dashboard?.id);
                             }}>
                             {dashboard?.starred ? (
                               <IconStarFilled16 />

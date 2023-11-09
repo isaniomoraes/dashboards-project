@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "react-query";
 
 import Dashboard from "./pages/Dashboard";
+import { Toaster } from "@/components/ui/toaster";
 
 // Create a react-query client
 const queryClient = new QueryClient();
@@ -11,6 +12,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Dashboard />
+      <Toaster />
     </QueryClientProvider>
   );
 }
