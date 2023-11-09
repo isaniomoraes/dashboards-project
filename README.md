@@ -1,7 +1,7 @@
 # DHIS2 Dashboard Exercise
 > React + TypeScript + Vite
 
-This template offers a streamlined setup to quickly integrate React into Vite with Hot Module Replacement (HMR) and essential ESLint rules.
+[Demo on Netlify](https://sunny-gecko-395f0b.netlify.app/)
 
 The core technologies include:
 - [React](https://reactjs.org/)
