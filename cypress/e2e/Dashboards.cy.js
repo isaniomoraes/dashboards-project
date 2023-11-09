@@ -1,6 +1,10 @@
 describe("Dashboard render all components and dashboard", () => {
   beforeEach(() => {
-    cy.visit("http://127.0.0.1:5173/");
+    const endpoint =
+      process.env.APP_ENV === "ci"
+        ? "http://localhost:4173"
+        : "http://127.0.0.1:5173/";
+    cy.visit(endpoint);
   });
 
   it("Display loading state with skeleton UI", () => {

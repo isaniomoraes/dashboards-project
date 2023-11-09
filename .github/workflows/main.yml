@@ -23,3 +23,5 @@ jobs:
           headed: true
           start: yarn start
           wait-on: 'http://localhost:4173'
+        env:
+          APP_ENV: ci
