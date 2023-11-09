@@ -148,11 +148,12 @@ export default function Dashboard() {
               <Accordion
                 type="single"
                 collapsible={true}
+                defaultValue={data?.dashboards?.[0]?.id}
                 className="w-full space-y-2">
                 {dashboards?.map((dashboard: TDashboard) => {
                   return (
                     <AccordionItem
-                      value={`dashboard-${dashboard?.id}`}
+                      value={dashboard?.id}
                       key={`dashboard-${dashboard?.id}`}
                       className="rounded-md shadow w-full bg-white relative">
                       <AccordionTrigger className="text-base font-medium flex items-center justify-between gap-2 px-4 py-2 w-full">
