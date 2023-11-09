@@ -17,7 +17,6 @@ import Loading from "./Loading";
 
 import { TDashboard, TDashboardDetailsItem } from "./types";
 
-// @ts-ignore
 import {
   IconStar16,
   IconStarFilled16,

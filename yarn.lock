@@ -1405,6 +1405,13 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/dhis2__ui-icons@^7.8.3":
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@types/dhis2__ui-icons/-/dhis2__ui-icons-7.8.3.tgz#ba612baaaaef6eb37e2905765e88d46977df3894"
+  integrity sha512-finvEM/6g86eSqqjYZDTdKSZL8pix3hwfFJ7JJVk12p/g4bwLrkkc3Y40UkswJfCRJYKJM753tqUH+A+2vis+w==
+  dependencies:
+    "@types/react" "*"
+
 "@types/json-schema@^7.0.12":
   version "7.0.15"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
