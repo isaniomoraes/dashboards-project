@@ -21,4 +21,4 @@ jobs:
         with:
           browser: chrome
           start: yarn start
-          wait-on: 'http://127.0.0.1:4173'
+          wait-on: 'http://localhost:4173'
