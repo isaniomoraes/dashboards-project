@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "vite preview",
     "build": "tsc && vite build",
     "cypress": "cypress open",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
