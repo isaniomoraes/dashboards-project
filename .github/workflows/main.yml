@@ -22,6 +22,6 @@ jobs:
           browser: chrome
           headed: true
           start: yarn start
-          wait-on: 'http://localhost:4173'
+          wait-on: 'http://localhost:5173'
         env:
           APP_ENV: ci
