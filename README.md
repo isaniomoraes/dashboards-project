@@ -30,7 +30,7 @@ yarn cypress
 ```
 
 ## CI/CD
-All GitHub Actions are set in `.github/workflows/main.yml` file, currently, we have simple Lint and Cypress E2E testing for every git push and pull request creation.
+All [GitHub Actions](https://github.com/isaniomoraes/dashboards-project/actions) are set in `.github/workflows/main.yml` file, currently, we have simple Lint and Cypress E2E testing for every git push and pull request creation.
 
 Preview:
 <img width="1351" alt="Screenshot 2023-11-09 at 18 15 07" src="https://github.com/isaniomoraes/dashboards-project/assets/3224086/9871fb99-06ba-43f5-8d99-8f401cd9ae5a">
