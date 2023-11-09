@@ -29,6 +29,14 @@ yarn install && yarn dev
 yarn cypress
 ```
 
+## CI/CD
+All GitHub Actions are set in `.github/workflows/main.yml` file, currently, we have simple Lint and Cypress E2E testing for every git push and pull request creation.
+
+Preview:
+<img width="1351" alt="Screenshot 2023-11-09 at 18 15 07" src="https://github.com/isaniomoraes/dashboards-project/assets/3224086/9871fb99-06ba-43f5-8d99-8f401cd9ae5a">
+<img width="1351" alt="Screenshot 2023-11-09 at 18 15 15" src="https://github.com/isaniomoraes/dashboards-project/assets/3224086/176828dd-fc4a-42e4-8acc-679f128ad03b">
+
+
 ## Expanding the ESLint Configuration
 
 For production applications, consider updating the ESLint configuration to enable type-aware lint rules:
