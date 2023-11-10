@@ -180,6 +180,8 @@ export default function Dashboard() {
                         {dashboard?.displayName}
                         <div className="flex items-center justify-end gap-2 text-slate-600 absolute right-10">
                           <span
+                            className="cursor-pointer dashboard-favorite-toggle"
+                            data-is-starred={dashboard?.starred}
                             onClick={(e) => {
                               e.stopPropagation();
                               onToggleFavorite(dashboard?.id);
