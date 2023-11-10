@@ -37,6 +37,12 @@ Preview:
 <img width="1351" alt="Screenshot 2023-11-09 at 18 15 15" src="https://github.com/isaniomoraes/dashboards-project/assets/3224086/176828dd-fc4a-42e4-8acc-679f128ad03b">
 
 
+## Improvements / TODOs
+- [ ] Run more webvitals profile process to improve any performance gap.
+- [ ] Add key handler to add the ability to favorite a dashboard using shortcut.
+- [ ] Integrate DHIS2 Colors and Components if required, for the time beam I just used Radix-UI + Tailwind CSS.
+- [ ] Move the favorites data storage from localStorage to a real API (Firebase, Supabase, Prisma, etc)
+
 ## Expanding the ESLint Configuration
 
 For production applications, consider updating the ESLint configuration to enable type-aware lint rules:
