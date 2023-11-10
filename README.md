@@ -39,9 +39,11 @@ Preview:
 
 ## Improvements / TODOs
 - [ ] Run more webvitals profile process to improve any performance gap.
+- [ ] Implement HTML tags sanitizer to render dashboard TEXT items and protect it to any XSS issues.
 - [ ] Add key handler to add the ability to favorite a dashboard using shortcut.
 - [ ] Integrate DHIS2 Colors and Components if required, for the time beam I just used Radix-UI + Tailwind CSS.
 - [ ] Move the favorites data storage from localStorage to a real API (Firebase, Supabase, Prisma, etc)
+- [ ] Display a message for empty Dashboard items when a filter is set.
 
 ## Expanding the ESLint Configuration
 
